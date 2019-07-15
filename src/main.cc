@@ -17,7 +17,11 @@ int main(int argc, char *argv[])
     google::ShowUsageWithFlags(argv[0]);
     return -1;
   }
-  
+
+  google::SetLogDestination(google::ERROR, "log/error");
+  google::SetLogDestination(google::INFO, "log/info");
+  google::SetLogDestination(google::FATAL, "log/fatal");
+  google::SetLogDestination(google::WARNING, "log/warning");
   google::InitGoogleLogging(argv[0]);
   google::ParseCommandLineFlags(&argc, &argv, true);
 

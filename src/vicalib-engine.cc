@@ -430,6 +430,11 @@ void VicalibEngine::CalibrateAndDrawLoop() {
 
     nanosleep(&sleep_length, NULL);
   }
+
+  for (size_t ii = 0; ii < vicalib_->GetCalibrator().NumCameras(); ++ii) {
+      std::cout << "Camera " << ii << ": mse: " <<  stats_->total_mse << std::endl;
+      std::cout << "Camera " << ii << ": reprojection error: " <<  stats_->reprojection_error[ii] << std::endl;
+  }
 }
 
 void VicalibEngine::Run() {

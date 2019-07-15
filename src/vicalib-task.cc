@@ -122,6 +122,7 @@ VicalibTask::VicalibTask(
     conic_finder_[i].Params().conic_min_aspect = 0.2;
   }
 
+  std::cout << "Clip good: " << FLAGS_clip_good << std::endl;
   if (FLAGS_clip_good) {
     logger_.LogToFile("", "good_tracking");
   }
@@ -281,14 +282,16 @@ void VicalibTask::AddImageMeasurements(const std::vector<bool>& valid_frames) {
     }
 
     if (FLAGS_clip_good && tracking_good_[ii] && (ii == 0)) {
-      good_frame_.push_back(true);
+      std::cout << "clip is good" << std::endl;
+        good_frame_.push_back(true);
       hal::ImageMsg* img_message = msg.mutable_camera()->add_image();
       img_message->set_height(img->Height());
       img_message->set_width(img->Width());
       cv::Mat image(img->Height(), img->Width(), CV_8UC1);
       memcpy(img->Mat().data, image.data, img->Height()*img->Width());
       img_message->set_data(image.data, img->Height()*img->Width());
-      img_message->set_format( hal::PB_LUMINANCE );
+      //img_message->set_format( hal::PB_LUMINANCE );
+      img_message->set_format( hal::PB_RGB );
       img_message->set_type( hal::PB_UNSIGNED_BYTE );
       if (ii == n - 1) {
         logger_.LogMessage(msg);
@@ -771,6 +774,7 @@ bool CameraCalibrationsDiffer(const CameraAndPose& last,
   Eigen::Vector3d currentTrans = current.T_ck.translation();
   Eigen::Vector3d squareCurrentToLast = (lastTrans - currentTrans);
   double dist = squareCurrentToLast.norm();
+  std::cout << dist << std::endl;
   if (dist > FLAGS_max_camera_trans_diff) {
     LOG(ERROR) << "Position of camera differs by " << dist
                << "more than expected ("
